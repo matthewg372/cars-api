@@ -6,7 +6,7 @@ DATABASE = SqliteDatabase('cars.sqlite')
 class Car(Model):
 	model = CharField()
 	make = CharField()
-	year = DecimalField()
+	year = BitField()
 	suv = BooleanField() 
 	class Meta:
 		database = DATABASE

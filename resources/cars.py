@@ -4,10 +4,6 @@ from playhouse.shortcuts import model_to_dict
 
 cars = Blueprint('cars', 'cars')
 
-@cars.route('/', methods=['GET'])
-def Cars_index():
-	result = models.Car
-	return 'index route'
 
 @cars.route('/', methods=['POST'])
 def create_car():
@@ -21,7 +17,13 @@ def create_car():
 	car_dict = model_to_dict(new_car)
 	return jsonify(
       data=car_dict, 
-      message='Successfully created dog!',
+      message='Successfully created car!',
       status=201
     ), 201
 
+@cars.route('/', methods=['GET'])
+def Cars_index():
+	result = models.Car
+	for car in result:
+		car = model_to_dict(car)
+	return jsonify(car)
