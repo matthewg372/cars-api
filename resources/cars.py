@@ -24,6 +24,8 @@ def create_car():
 @cars.route('/', methods=['GET'])
 def Cars_index():
 	result = models.Car
+	cars = []
 	for car in result:
 		car = model_to_dict(car)
-	return jsonify(car)
+		cars.append(car)
+	return jsonify(cars)
