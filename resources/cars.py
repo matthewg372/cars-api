@@ -26,6 +26,29 @@ def Cars_index():
 	result = models.Car
 	cars = []
 	for car in result:
-		car = model_to_dict(car)
-		cars.append(car)
-	return jsonify(cars)
+		Car = model_to_dict(car)
+		cars.append(Car)
+	return jsonify(
+      data=cars, 
+      message='Successfully created car!',
+      status=200
+    ), 200
+
+
+@cars.route('/<id>', methods=['DELETE'])
+def delete_car(id):
+	delete_query = models.Car.delete().where(models.Car.id == id)
+	delete_query.execute()
+		
+	return jsonify(
+			data={},
+			message=f"Successfully Deleted {id}",
+			status=200
+
+			), 200
+
+
+
+
+
+
