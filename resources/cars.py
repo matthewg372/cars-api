@@ -47,6 +47,27 @@ def delete_car(id):
 
 			), 200
 
+@cars.route('/<id>', methods=['PUT'])
+def update_car(id):
+	payload = request.get_json()
+	update_car = models.Car.update(
+		model=payload['model'],
+		make=payload['make'],
+		year=payload['year'],
+		suv=payload['suv'],
+
+	).where(models.Car.id == id)
+	update_car.execute()
+	updated_car = models.Car.get_by_id(id) 
+	updated_car_dict = model_to_dict(updated_car)
+
+	return jsonify(
+		data=updated_car_dict,
+		message=f"Successfully updated {id}",
+		status=200
+
+		), 200
+
 
 
 
