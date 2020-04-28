@@ -14,6 +14,13 @@ app.secret_key = "SDKFJHSIKFHSHFDHJKLSJDHKFJFJSLDJKFLSJLFK;LSDKFSFD"
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+@login_manager.user_loader
+def load_user(user_id):
+	try:
+		return models.User.get_by_id(user_id)
+	except models.DoesNotExist:
+		return None
+
 
 
 cors = CORS(cars, origins=['http://localhost:3000'],supports_credentials=True)
