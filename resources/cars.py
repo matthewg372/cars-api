@@ -1,11 +1,13 @@
 import models
 from flask import Blueprint , request, jsonify
-from playhouse.shortcuts import model_to_dict 
+from playhouse.shortcuts import model_to_dict
+from flask_login import current_user, login_required
 
 cars = Blueprint('cars', 'cars')
 
 
 @cars.route('/', methods=['POST'])
+@login_required
 def create_car():
 	payload = request.get_json()
 	new_car = models.Car.create(
@@ -22,6 +24,7 @@ def create_car():
     ), 201
 
 @cars.route('/', methods=['GET'])
+@login_required
 def Cars_index():
 	result = models.Car
 	cars = []
@@ -36,16 +39,28 @@ def Cars_index():
 
 
 @cars.route('/<id>', methods=['DELETE'])
+@login_required
 def delete_car(id):
-	delete_query = models.Car.delete().where(models.Car.id == id)
-	delete_query.execute()
-		
-	return jsonify(
-			data={},
-			message=f"Successfully Deleted {id}",
-			status=200
+	dogs = models.Dog.select()
+	for dog in dogs:
+		dog = model_to_dict(dog)
+	if current_user.id == dog['owner']['id']:
+		delete_query = models.Car.delete().where(models.Car.id == id)
+		delete_query.execute()
+			
+		return jsonify(
+					data={},
+					message=f"Successfully Deleted {id}",
+					status=200
 
-			), 200
+				), 200
+	else:
+		return jsonify(
+					data={},
+					message=f"you must be signed in to delete",
+					status=401
+
+				), 401
 
 @cars.route('/<id>', methods=['PUT'])
 def update_car(id):

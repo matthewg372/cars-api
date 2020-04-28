@@ -106,7 +106,14 @@ def get_logged_in_user():
 			message=f"Currently logged in as {user_dict['email']}.",
 			status=200
 		), 200
-
+@users.route('/logout', methods=['GET'])
+def logout(): 
+	logout_user()
+	return jsonify(
+		data={},
+		message="Successfully logged out.",
+		status=200
+	), 200
 
 
 
