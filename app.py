@@ -3,11 +3,19 @@ import models
 from resources.cars import cars
 from flask_cors import CORS
 from resources.users import users
+from flask_login import LoginManager
 
 DEBUG=True
 PORT=8000
 
 app = Flask(__name__)
+
+app.secret_key = "SDKFJHSIKFHSHFDHJKLSJDHKFJFJSLDJKFLSJLFK;LSDKFSFD"
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+
+
 cors = CORS(cars, origins=['http://localhost:3000'],supports_credentials=True)
 cors = CORS(users, origins=['http://localhost:3000'],supports_credentials=True)
 
