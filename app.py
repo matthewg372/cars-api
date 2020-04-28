@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 import models
 from resources.cars import cars
 from flask_cors import CORS

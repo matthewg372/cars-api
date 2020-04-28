@@ -11,12 +11,14 @@ cars = Blueprint('cars', 'cars')
 def create_car():
 	payload = request.get_json()
 	new_car = models.Car.create(
+		user=current_user.id,
 		model=payload['model'], 
 		make=payload['make'],
 		year=payload['year'],
 		suv=payload['suv']
 		)
 	car_dict = model_to_dict(new_car)
+	car_dict['user'].pop('password')
 	return jsonify(
       data=car_dict, 
       message='Successfully created car!',
@@ -41,10 +43,10 @@ def Cars_index():
 @cars.route('/<id>', methods=['DELETE'])
 @login_required
 def delete_car(id):
-	dogs = models.Dog.select()
-	for dog in dogs:
-		dog = model_to_dict(dog)
-	if current_user.id == dog['owner']['id']:
+	cars = models.Car.select()
+	for car in cars:
+		car = model_to_dict(car)
+	if current_user.id == car['user']['id']:
 		delete_query = models.Car.delete().where(models.Car.id == id)
 		delete_query.execute()
 			
