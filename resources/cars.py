@@ -65,25 +65,39 @@ def delete_car(id):
 				), 401
 
 @cars.route('/<id>', methods=['PUT'])
+@login_required
 def update_car(id):
-	payload = request.get_json()
-	update_car = models.Car.update(
-		model=payload['model'],
-		make=payload['make'],
-		year=payload['year'],
-		suv=payload['suv'],
+	cars = models.Car.select()
+	for car in cars:
+		car = model_to_dict(car)
+	if current_user.id == car['user']['id']:
 
-	).where(models.Car.id == id)
-	update_car.execute()
-	updated_car = models.Car.get_by_id(id) 
-	updated_car_dict = model_to_dict(updated_car)
+		payload = request.get_json()
+		update_car = models.Car.update(
+			model=payload['model'],
+			make=payload['make'],
+			year=payload['year'],
+			suv=payload['suv'],
 
-	return jsonify(
-		data=updated_car_dict,
-		message=f"Successfully updated {id}",
-		status=200
+		).where(models.Car.id == id)
+		update_car.execute()
+		updated_car = models.Car.get_by_id(id) 
+		updated_car_dict = model_to_dict(updated_car)
+
+		return jsonify(
+			data=updated_car_dict,
+			message=f"Successfully updated {id}",
+			status=200
+
+			), 200
+	else: 
+		return jsonify(
+			data={},
+			message=f"you must be logged in to update",
+			status=200
 
 		), 200
+
 
 
 
