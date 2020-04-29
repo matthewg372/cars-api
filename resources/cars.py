@@ -43,10 +43,8 @@ def Cars_index():
 @cars.route('/<id>', methods=['DELETE'])
 @login_required
 def delete_car(id):
-	cars = models.Car.select()
-	for car in cars:
-		car = model_to_dict(car)
-	if current_user.id == car['user']['id']:
+	car_to_delete = models.Car.get_by_id(id)
+	if current_user.id == car_to_delete.user.id:
 		delete_query = models.Car.delete().where(models.Car.id == id)
 		delete_query.execute()
 			
@@ -67,22 +65,23 @@ def delete_car(id):
 @cars.route('/<id>', methods=['PUT'])
 @login_required
 def update_car(id):
-	cars = models.Car.select()
-	for car in cars:
-		car = model_to_dict(car)
-	if current_user.id == car['user']['id']:
+	payload = request.get_json()
+	car_to_update = models.Car.get_by_id(id)
+	if current_user.id == car_to_update.user.id:
 
-		payload = request.get_json()
-		update_car = models.Car.update(
-			model=payload['model'],
-			make=payload['make'],
-			year=payload['year'],
-			suv=payload['suv'],
+		if 'model' in payload:
+			car_to_update.model=payload['model'],
+		if 'make' in payload:
+			car_to_update.make=payload['make'],
+		if 'year' in payload:
+			car_to_update.year=payload['year'],
+		if 'suv' in payload:
+			car_to_update.suv=payload['suv'],
 
-		).where(models.Car.id == id)
-		update_car.execute()
-		updated_car = models.Car.get_by_id(id) 
-		updated_car_dict = model_to_dict(updated_car)
+		car_to_update.save()
+		updated_car_dict = model_to_dict(car_to_update)
+		updated_car_dict['user'].pop('password')
+		
 
 		return jsonify(
 			data=updated_car_dict,
